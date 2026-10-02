@@ -7,12 +7,16 @@
 
     <title>Orçador de Serviços</title>
 
-    <!-- Biblioteca responsável pela geração do PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
-
     <style>
         * {
             box-sizing: border-box;
+        }
+
+        :root {
+            --azul: #153dcc;
+            --cinza: #555555;
+            --vermelho: #b00020;
+            --borda: #222222;
         }
 
         body {
@@ -92,17 +96,17 @@
         }
 
         .btn-principal {
-            background: #153dcc;
+            background: var(--azul);
             color: #ffffff;
         }
 
         .btn-secundario {
-            background: #555555;
+            background: var(--cinza);
             color: #ffffff;
         }
 
         .btn-perigo {
-            background: #b00020;
+            background: var(--vermelho);
             color: #ffffff;
         }
 
@@ -112,7 +116,7 @@
         }
 
         /*
-         * Área de cadastro dos serviços
+         * Cadastro dos serviços
          */
 
         .cabecalho-itens {
@@ -145,54 +149,42 @@
         }
 
         /*
-         * MODELO DO ORÇAMENTO
+         * ÁREA DO ORÇAMENTO
          *
-         * 210 mm x 297 mm corresponde ao formato A4.
-         *
-         * min-height é usado em vez de height para que o
-         * conteúdo possa continuar para outra página.
+         * A folha possui largura A4.
+         * A altura é automática para permitir
+         * continuação natural em outra página.
          */
 
         #orcamento {
             width: 210mm;
             min-height: 297mm;
-            height: auto;
-            overflow: visible;
             margin: 20px auto;
-            padding: 10mm;
+            padding: 15mm;
             background: #ffffff;
             color: #111111;
+            box-shadow: 0 0 8px #999999;
 
             /*
-             * Permite que o conteúdo continue em outra página
-             * quando ultrapassar a altura de uma folha A4.
+             * Muito importante:
+             * não usar height fixa nem overflow hidden.
              */
-            page-break-inside: auto;
-            break-inside: auto;
+            height: auto;
+            overflow: visible;
         }
 
-        /*
-         * Evita cortar estes blocos no meio de uma página.
-         */
-        .cabecalho-orcamento,
-        .informacoes-superiores,
-        .condicoes,
-        .dados-cliente,
-        .resumo-financeiro,
-        .outras-informacoes {
-            page-break-inside: avoid;
-            break-inside: avoid;
-        }
-
-        /*
-         * O cabeçalho de cada orçamento fica inteiro.
-         */
         .cabecalho-orcamento {
             display: flex;
             justify-content: space-between;
             gap: 20px;
             padding-bottom: 14px;
-            border-bottom: 1px solid #222222;
+            border-bottom: 1px solid var(--borda);
+
+            /*
+             * Não cortar o cabeçalho.
+             */
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .area-logo {
@@ -227,18 +219,27 @@
             gap: 20px;
             margin: 15px 0;
             font-size: 12px;
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .condicoes {
             margin: 12px 0 16px 0;
             font-size: 12px;
-            line-height: 1.3;
+            line-height: 1.35;
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .dados-cliente {
             margin-bottom: 15px;
             padding-bottom: 13px;
-            border-bottom: 1px solid #222222;
+            border-bottom: 1px solid var(--borda);
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .dados-cliente h3 {
@@ -252,7 +253,10 @@
         }
 
         /*
-         * TABELA DO ORÇAMENTO
+         * TABELA
+         *
+         * A tabela pode passar para a página seguinte,
+         * como acontece em um documento do Word.
          */
 
         .tabela-servicos {
@@ -260,10 +264,6 @@
             border-collapse: collapse;
             table-layout: fixed;
             font-size: 11px;
-
-            /*
-             * A tabela pode continuar na página seguinte.
-             */
             page-break-inside: auto;
             break-inside: auto;
         }
@@ -272,21 +272,27 @@
             display: table-header-group;
         }
 
+        .tabela-servicos tfoot {
+            display: table-footer-group;
+        }
+
         .tabela-servicos tr {
             page-break-inside: avoid;
             break-inside: avoid;
+            page-break-after: auto;
         }
 
         .tabela-servicos th {
             padding: 6px 4px;
             text-align: left;
-            border-bottom: 1px solid #222222;
+            border-bottom: 1px solid var(--borda);
         }
 
         .tabela-servicos td {
             padding: 7px 4px;
             vertical-align: top;
             word-wrap: break-word;
+            overflow-wrap: anywhere;
         }
 
         .tabela-servicos th:nth-child(1),
@@ -320,12 +326,15 @@
         }
 
         /*
-         * RESUMO FINANCEIRO
+         * Resumo financeiro
          */
 
         .resumo-financeiro {
             margin-top: 12px;
             font-size: 12px;
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .linha-financeira {
@@ -336,26 +345,29 @@
         }
 
         .linha-desconto {
-            color: #b00020;
+            color: var(--vermelho);
         }
 
         .total-geral {
             margin-top: 4px;
             padding-top: 9px;
-            border-top: 1px solid #222222;
+            border-top: 1px solid var(--borda);
             font-size: 16px;
             font-weight: bold;
         }
 
         /*
-         * OUTRAS INFORMAÇÕES
+         * Outras informações
          */
 
         .outras-informacoes {
             margin-top: 18px;
             padding-top: 12px;
-            border-top: 1px solid #222222;
+            border-top: 1px solid var(--borda);
             font-size: 11px;
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .outras-informacoes h3 {
@@ -372,31 +384,44 @@
             text-align: center;
             color: #666666;
             font-size: 9px;
+
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         /*
-         * Configurações usadas apenas na impressão normal.
+         * Configuração de impressão A4.
          */
 
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
         @media print {
+            html,
             body {
+                width: 210mm;
                 margin: 0;
                 padding: 0;
                 background: #ffffff;
             }
 
             .painel {
-                display: none;
+                display: none !important;
             }
 
             #orcamento {
+                width: 210mm;
+                min-height: 297mm;
                 margin: 0;
+                padding: 15mm;
                 box-shadow: none;
             }
         }
 
         /*
-         * Configurações para celular.
+         * Tela de celular.
          */
 
         @media (max-width: 750px) {
@@ -430,6 +455,7 @@
             #orcamento {
                 width: 100%;
                 min-height: auto;
+                margin: 20px auto;
                 padding: 20px;
             }
 
@@ -613,13 +639,8 @@
                 </label>
 
                 <select id="mostrarDesconto">
-                    <option value="sim">
-                        Sim
-                    </option>
-
-                    <option value="nao">
-                        Não
-                    </option>
+                    <option value="sim">Sim</option>
+                    <option value="nao">Não</option>
                 </select>
             </div>
 
@@ -704,7 +725,7 @@
     </div>
 
 
-    <!-- MODELO QUE SERÁ TRANSFORMADO EM PDF -->
+    <!-- MODELO DO ORÇAMENTO -->
 
     <div id="orcamento">
 
@@ -861,13 +882,13 @@
 
     <script>
         /*
-         * Armazena a imagem da logo em formato Base64.
+         * Guarda a logo selecionada pelo usuário.
          */
         let logoBase64 = "";
 
 
         /*
-         * Formata um número como moeda brasileira.
+         * Formata valores para moeda brasileira.
          */
         function formatarMoeda(valor) {
             return Number(valor).toLocaleString("pt-BR", {
@@ -878,7 +899,7 @@
 
 
         /*
-         * Converte a data para o padrão brasileiro.
+         * Formata data para o padrão brasileiro.
          */
         function formatarData(data) {
             if (!data) {
@@ -896,7 +917,7 @@
 
 
         /*
-         * Protege textos digitados nos campos.
+         * Protege textos inseridos pelo usuário.
          */
         function protegerTexto(texto) {
             return String(texto)
@@ -909,13 +930,7 @@
 
 
         /*
-         * Adiciona um item de serviço.
-         *
-         * Ordem dos parâmetros:
-         * descrição,
-         * unidade,
-         * quantidade,
-         * valor unitário.
+         * Adiciona um serviço ao formulário.
          */
         function adicionarItem(
             descricao = "",
@@ -1034,7 +1049,7 @@
 
 
         /*
-         * Remove um item do orçamento.
+         * Remove um serviço.
          */
         function removerItem(botao) {
             botao.parentElement.remove();
@@ -1043,7 +1058,7 @@
 
 
         /*
-         * Atualiza o modelo do orçamento e os cálculos.
+         * Atualiza os dados do orçamento e calcula os valores.
          */
         function atualizarOrcamento() {
             document.getElementById("pdfNumero").textContent =
@@ -1090,7 +1105,7 @@
 
 
             /*
-             * Limpa a tabela antes de preencher novamente.
+             * Preenche novamente a tabela de serviços.
              */
             const tabela =
                 document.getElementById("pdfItens");
@@ -1099,10 +1114,6 @@
 
             let subtotal = 0;
 
-
-            /*
-             * Percorre todos os itens.
-             */
             const itens =
                 document.querySelectorAll(".linha-item");
 
@@ -1123,11 +1134,6 @@
                         item.querySelector(".valor").value
                     ) || 0;
 
-
-                /*
-                 * Total do item:
-                 * quantidade x valor unitário.
-                 */
                 const totalItem =
                     quantidade * valorUnitario;
 
@@ -1163,79 +1169,57 @@
 
 
             /*
-             * Lê o desconto percentual.
+             * Calcula desconto.
              */
-            let porcentagemDesconto =
+            let percentual =
                 Number(
-                    document
-                        .getElementById(
-                            "descontoPorcentagem"
-                        )
-                        .value
+                    document.getElementById(
+                        "descontoPorcentagem"
+                    ).value
                 ) || 0;
 
-
-            /*
-             * Limita o desconto entre 0% e 100%.
-             */
-            if (porcentagemDesconto < 0) {
-                porcentagemDesconto = 0;
+            if (percentual < 0) {
+                percentual = 0;
             }
 
-            if (porcentagemDesconto > 100) {
-                porcentagemDesconto = 100;
+            if (percentual > 100) {
+                percentual = 100;
             }
 
-
-            /*
-             * Calcula o valor do desconto.
-             */
             const valorDesconto =
-                subtotal *
-                porcentagemDesconto /
-                100;
+                subtotal * percentual / 100;
 
-
-            /*
-             * Calcula o total final.
-             */
             const totalFinal =
-                subtotal -
-                valorDesconto;
+                subtotal - valorDesconto;
 
 
             /*
-             * Exibe os valores.
+             * Exibe o resumo financeiro.
              */
             document.getElementById("pdfSubtotal").textContent =
                 formatarMoeda(subtotal);
 
-            document
-                .getElementById(
-                    "pdfDescontoPorcentagem"
-                )
-                .textContent =
-                porcentagemDesconto.toLocaleString(
+            document.getElementById(
+                "pdfDescontoPorcentagem"
+            ).textContent =
+                percentual.toLocaleString(
                     "pt-BR",
                     {
                         maximumFractionDigits: 2
                     }
                 );
 
-            document
-                .getElementById(
-                    "pdfValorDesconto"
-                )
-                .textContent =
-                "- " +
-                formatarMoeda(valorDesconto);
+            document.getElementById(
+                "pdfValorDesconto"
+            ).textContent =
+                "- " + formatarMoeda(valorDesconto);
 
             document.getElementById("pdfTotal").textContent =
                 formatarMoeda(totalFinal);
 
 
             /*
-             * Mostra ou oculta o desconto no PDF.
+             * Exibe ou oculta a linha do desconto.
              */
             const mostrarDesconto =
                 document.getElementById(
@@ -1249,7 +1233,7 @@
 
             if (
                 mostrarDesconto === "nao" ||
-                porcentagemDesconto === 0
+                percentual === 0
             ) {
                 linhaDesconto.style.display =
                     "none";
@@ -1260,7 +1244,7 @@
 
 
             /*
-             * Exibe a logo.
+             * Mostra a logo.
              */
             if (logoBase64) {
                 const imagem =
@@ -1275,26 +1259,29 @@
 
 
         /*
-         * Gera o PDF em formato A4.
+         * GERA O PDF USANDO A IMPRESSÃO NATIVA DO NAVEGADOR.
          *
-         * Se couber em uma página, será uma página.
-         * Se ultrapassar o limite, continuará em outra.
+         * Isso produz uma paginação mais parecida
+         * com o Word:
+         *
+         * - A4;
+         * - uma página quando couber;
+         * - próxima página quando ultrapassar;
+         * - quebra natural de texto;
+         * - tabela continuando normalmente.
          */
         function gerarPDF() {
             atualizarOrcamento();
-
-            const elemento =
-                document.getElementById("orcamento");
-
-            const numero =
-                document.getElementById(
-                    "numeroOrcamento"
-                ).value || "sem-numero";
 
             const cliente =
                 document.getElementById(
                     "clienteNome"
                 ).value || "cliente";
+
+            const numero =
+                document.getElementById(
+                    "numeroOrcamento"
+                ).value || "sem-numero";
 
             const nomeCliente =
                 cliente
@@ -1310,71 +1297,24 @@
             const nomeArquivo =
                 `Orcamento-${numero}-${nomeCliente}.pdf`;
 
-            const opcoes = {
-                margin: 0,
+            /*
+             * O navegador não permite definir sempre
+             * o nome do arquivo na impressão nativa.
+             * Por isso mostramos o nome recomendado
+             * para você usar na caixa de salvar.
+             */
+            alert(
+                "Na próxima tela, escolha 'Salvar como PDF'. " +
+                "Nome sugerido: " +
+                nomeArquivo
+            );
 
-                filename: nomeArquivo,
-
-                image: {
-                    type: "jpeg",
-                    quality: 0.98
-                },
-
-                html2canvas: {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#ffffff",
-
-                    /*
-                     * Captura todo o conteúdo do orçamento,
-                     * mesmo quando ele ultrapassar uma página.
-                     */
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: elemento.scrollWidth,
-                    windowHeight: elemento.scrollHeight
-                },
-
-                jsPDF: {
-                    unit: "mm",
-                    format: "a4",
-                    orientation: "portrait",
-                    compress: true
-                },
-
-                pagebreak: {
-                    /*
-                     * Tenta evitar cortes em elementos.
-                     * Quando o conteúdo exceder A4,
-                     * cria páginas adicionais.
-                     */
-                    mode: [
-                        "avoid-all",
-                        "css",
-                        "legacy"
-                    ],
-
-                    avoid: [
-                        "tr",
-                        ".cabecalho-orcamento",
-                        ".informacoes-superiores",
-                        ".condicoes",
-                        ".dados-cliente",
-                        ".resumo-financeiro",
-                        ".outras-informacoes"
-                    ]
-                }
-            };
-
-            html2pdf()
-                .set(opcoes)
-                .from(elemento)
-                .save();
+            window.print();
         }
 
 
         /*
-         * Monta os dados que serão salvos no navegador.
+         * Reúne os dados para salvar no navegador.
          */
         function obterDadosParaSalvar() {
             const itens = [];
@@ -1411,6 +1351,11 @@
                         "empresaNome"
                     ).value,
 
+                numeroOrcamento:
+                    document.getElementById(
+                        "numeroOrcamento"
+                    ).value,
+
                 empresaEmail:
                     document.getElementById(
                         "empresaEmail"
@@ -1419,6 +1364,36 @@
                 empresaTelefone:
                     document.getElementById(
                         "empresaTelefone"
+                    ).value,
+
+                clienteNome:
+                    document.getElementById(
+                        "clienteNome"
+                    ).value,
+
+                clienteTelefone:
+                    document.getElementById(
+                        "clienteTelefone"
+                    ).value,
+
+                clienteEndereco:
+                    document.getElementById(
+                        "clienteEndereco"
+                    ).value,
+
+                dataEmissao:
+                    document.getElementById(
+                        "dataEmissao"
+                    ).value,
+
+                validade:
+                    document.getElementById(
+                        "validade"
+                    ).value,
+
+                garantia:
+                    document.getElementById(
+                        "garantia"
                     ).value,
 
                 pagamento:
@@ -1447,7 +1422,7 @@
 
 
         /*
-         * Salva dados no navegador.
+         * Salva os dados no navegador.
          */
         function salvarDados() {
             const dados =
@@ -1465,7 +1440,7 @@
 
 
         /*
-         * Carrega dados salvos.
+         * Carrega os dados salvos.
          */
         function carregarDados() {
             const dadosSalvos =
@@ -1491,6 +1466,11 @@
                 dados.empresaNome || "";
 
             document.getElementById(
+                "numeroOrcamento"
+            ).value =
+                dados.numeroOrcamento || "";
+
+            document.getElementById(
                 "empresaEmail"
             ).value =
                 dados.empresaEmail || "";
@@ -1499,6 +1479,36 @@
                 "empresaTelefone"
             ).value =
                 dados.empresaTelefone || "";
+
+            document.getElementById(
+                "clienteNome"
+            ).value =
+                dados.clienteNome || "";
+
+            document.getElementById(
+                "clienteTelefone"
+            ).value =
+                dados.clienteTelefone || "";
+
+            document.getElementById(
+                "clienteEndereco"
+            ).value =
+                dados.clienteEndereco || "";
+
+            document.getElementById(
+                "dataEmissao"
+            ).value =
+                dados.dataEmissao || "";
+
+            document.getElementById(
+                "validade"
+            ).value =
+                dados.validade || "";
+
+            document.getElementById(
+                "garantia"
+            ).value =
+                dados.garantia || "";
 
             document.getElementById(
                 "pagamento"
@@ -1554,7 +1564,7 @@
         function limparDados() {
             const confirmar =
                 confirm(
-                    "Deseja realmente apagar os dados salvos?"
+                    "Deseja realmente apagar todos os dados salvos?"
                 );
 
             if (confirmar) {
@@ -1563,14 +1573,14 @@
                 );
 
                 alert(
-                    "Dados salvos apagados."
+                    "Dados apagados."
                 );
             }
         }
 
 
         /*
-         * Carrega a logo.
+         * Carrega uma logo do computador ou celular.
          */
         document
             .getElementById("logoArquivo")
@@ -1603,7 +1613,8 @@
 
 
         /*
-         * Atualiza o cálculo enquanto o desconto é digitado.
+         * Atualiza automaticamente ao alterar
+         * o percentual de desconto.
          */
         document
             .getElementById(
@@ -1616,8 +1627,8 @@
 
 
         /*
-         * Atualiza a tela ao escolher mostrar
-         * ou ocultar o desconto.
+         * Atualiza ao escolher mostrar
+         * ou esconder o desconto.
          */
         document
             .getElementById(
@@ -1630,7 +1641,7 @@
 
 
         /*
-         * Define automaticamente a data atual.
+         * Define a data atual.
          */
         const hoje =
             new Date();
@@ -1661,7 +1672,7 @@
 
 
         /*
-         * Serviços iniciais do exemplo.
+         * Serviços de exemplo.
          */
         adicionarItem(
             "IMPERMEABILIZAÇÃO MANTA ALUMÍNIO 4mm",
@@ -1679,7 +1690,7 @@
 
 
         /*
-         * Atualiza o orçamento ao abrir a página.
+         * Atualiza o orçamento ao abrir.
          */
         atualizarOrcamento();
     </script>
