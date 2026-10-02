@@ -307,7 +307,7 @@
         }
 
         /*
-         * RESUMO FINANCEIRO
+         * RESUMO
          */
 
         .resumo-financeiro {
@@ -339,10 +339,6 @@
             font-size: 16px;
             font-weight: bold;
         }
-
-        /*
-         * OUTRAS INFORMAÇÕES
-         */
 
         .outras-informacoes {
             margin-top: 18px;
@@ -743,7 +739,7 @@
                 >
 
                 <small id="nomeLogo">
-                    Logo padrão: LOGO BETO PINTURAS.jpg
+                    Logo padrão: logo.png
                 </small>
             </div>
 
@@ -759,7 +755,6 @@
             <div>Ação</div>
         </div>
 
-        <!-- Começa sem serviços -->
         <div id="listaItens"></div>
 
         <button
@@ -825,7 +820,7 @@
     </div>
 
 
-    <!-- MODELO DO ORÇAMENTO -->
+    <!-- ORÇAMENTO -->
 
     <div id="orcamento">
 
@@ -834,7 +829,7 @@
             <div class="area-logo">
                 <img
                     id="logoVisual"
-                    src="./LOGO BETO PINTURAS.jpg"
+                    src="logo.png"
                     alt="Logo da empresa"
                 >
             </div>
@@ -989,27 +984,19 @@
 
         </div>
 
-        <div class="rodape">
-            Documento gerado pelo sistema de orçamentos.
-        </div>
-
     </div>
 
 
     <script>
         /*
-         * Arquivo permanente da logo no GitHub.
-         *
-         * Ele precisa estar na mesma pasta do index.html:
-         *
-         * ./LOGO BETO PINTURAS.jpg
+         * A logo está no mesmo diretório do index.html.
          */
         const LOGO_PADRAO =
-            "./LOGO BETO PINTURAS.jpg";
+            "logo.png";
 
         /*
          * Logo usada atualmente.
-         * Começa com a logo permanente.
+         * Começa com a logo do GitHub.
          */
         let logoAtual =
             LOGO_PADRAO;
@@ -1171,6 +1158,20 @@
         function removerItem(botao) {
             botao.parentElement.remove();
             atualizarOrcamento();
+        }
+
+
+        function atualizarLogo() {
+            const imagem =
+                document.getElementById(
+                    "logoVisual"
+                );
+
+            imagem.src =
+                logoAtual;
+
+            imagem.style.display =
+                "block";
         }
 
 
@@ -1413,16 +1414,7 @@
                     : "none";
 
 
-            const imagem =
-                document.getElementById(
-                    "logoVisual"
-                );
-
-            imagem.src =
-                logoAtual;
-
-            imagem.style.display =
-                "block";
+            atualizarLogo();
         }
 
 
@@ -1526,14 +1518,7 @@
                 mostrarBDI:
                     campo("mostrarBDI"),
 
-                /*
-                 * Se for uma imagem escolhida pelo usuário,
-                 * será salva como Base64.
-                 *
-                 * Se não houver imagem personalizada,
-                 * será salva a logo permanente do GitHub.
-                 */
-                logoAtual:
+                logoPersonalizada:
                     logoAtual === LOGO_PADRAO
                         ? ""
                         : logoAtual,
@@ -1614,37 +1599,24 @@
             });
 
 
-            /*
-             * Se houver logo personalizada salva,
-             * ela será usada.
-             *
-             * Se não houver, usa o arquivo permanente
-             * da pasta do GitHub.
-             */
             logoAtual =
-                dados.logoAtual ||
+                dados.logoPersonalizada ||
                 LOGO_PADRAO;
 
             document.getElementById(
                 "nomeLogo"
             ).textContent =
-                dados.logoAtual
+                dados.logoPersonalizada
                     ? "Logo personalizada carregada"
-                    : "Logo padrão: LOGO BETO PINTURAS.jpg";
+                    : "Logo padrão: logo.png";
 
 
-            /*
-             * Limpa os itens atuais.
-             */
             document.getElementById(
                 "listaItens"
             ).innerHTML =
                 "";
 
 
-            /*
-             * Recria apenas os itens salvos.
-             */
             if (
                 Array.isArray(
                     dados.itens
@@ -1663,7 +1635,7 @@
             atualizarOrcamento();
 
             alert(
-                "Dados, itens e logo carregados com sucesso."
+                "Dados e itens carregados com sucesso."
             );
         }
 
@@ -1680,12 +1652,12 @@
             document.getElementById(
                 "nomeLogo"
             ).textContent =
-                "Logo padrão: LOGO BETO PINTURAS.jpg";
+                "Logo padrão: logo.png";
 
             atualizarOrcamento();
 
             alert(
-                "Logo permanente restaurada."
+                "Logo padrão restaurada."
             );
         }
 
@@ -1715,7 +1687,7 @@
             document.getElementById(
                 "nomeLogo"
             ).textContent =
-                "Logo padrão: LOGO BETO PINTURAS.jpg";
+                "Logo padrão: logo.png";
 
             document.getElementById(
                 "listaItens"
@@ -1725,7 +1697,7 @@
             atualizarOrcamento();
 
             alert(
-                "Dados apagados. Logo permanente restaurada."
+                "Dados apagados. Logo padrão restaurada."
             );
         }
 
@@ -1767,8 +1739,7 @@
 
 
         /*
-         * Permite substituir a logo permanente
-         * somente para o uso atual.
+         * Troca temporariamente a logo padrão.
          */
         document.getElementById(
             "logoArquivo"
@@ -1782,14 +1753,14 @@
                     return;
                 }
 
-                const tiposPermitidos = [
+                const permitidos = [
                     "image/png",
                     "image/jpeg",
                     "image/jpg"
                 ];
 
                 if (
-                    !tiposPermitidos.includes(
+                    !permitidos.includes(
                         arquivo.type
                     )
                 ) {
@@ -1843,24 +1814,4 @@
 
 
         /*
-         * Inicialização:
-         * - logo permanente;
-         * - data do dia;
-         * - nenhum serviço.
-         */
-        logoAtual =
-            LOGO_PADRAO;
-
-        document.getElementById(
-            "dataEmissao"
-        ).value =
-            hojeISO();
-
-        ativarAtualizacaoAutomatica();
-
-        atualizarOrcamento();
-    </script>
-
-</body>
-
-</html>
+         * Inicialização sem
