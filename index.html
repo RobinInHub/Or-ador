@@ -122,7 +122,7 @@
         }
 
         /*
-         * ÁREA DE SERVIÇOS
+         * SERVIÇOS
          */
 
         .cabecalho-itens,
@@ -151,7 +151,7 @@
         }
 
         /*
-         * MODELO DO ORÇAMENTO
+         * ORÇAMENTO
          */
 
         #orcamento {
@@ -701,13 +701,8 @@
                 </label>
 
                 <select id="mostrarDesconto">
-                    <option value="sim">
-                        Sim
-                    </option>
-
-                    <option value="nao">
-                        Não
-                    </option>
+                    <option value="sim">Sim</option>
+                    <option value="nao">Não</option>
                 </select>
             </div>
 
@@ -717,19 +712,14 @@
                 </label>
 
                 <select id="mostrarBDI">
-                    <option value="sim">
-                        Sim
-                    </option>
-
-                    <option value="nao">
-                        Não
-                    </option>
+                    <option value="sim">Sim</option>
+                    <option value="nao">Não</option>
                 </select>
             </div>
 
             <div class="campo campo-largo">
                 <label for="logoArquivo">
-                    Logo da empresa
+                    Substituir logo padrão
                 </label>
 
                 <input
@@ -739,7 +729,7 @@
                 >
 
                 <small id="nomeLogo">
-                    Nenhuma logo selecionada
+                    Logo padrão do código carregada
                 </small>
             </div>
 
@@ -755,7 +745,7 @@
             <div>Ação</div>
         </div>
 
-        <!-- Começa vazio -->
+        <!-- A lista começa vazia -->
         <div id="listaItens"></div>
 
         <button
@@ -803,6 +793,14 @@
             <button
                 class="btn-perigo"
                 type="button"
+                onclick="restaurarLogoPadrao()"
+            >
+                Restaurar logo padrão
+            </button>
+
+            <button
+                class="btn-perigo"
+                type="button"
                 onclick="limparDados()"
             >
                 Limpar dados salvos
@@ -813,7 +811,7 @@
     </div>
 
 
-    <!-- ORÇAMENTO -->
+    <!-- MODELO DO ORÇAMENTO -->
 
     <div id="orcamento">
 
@@ -822,7 +820,6 @@
             <div class="area-logo">
                 <img
                     id="logoVisual"
-                    style="display: none;"
                     alt="Logo da empresa"
                 >
             </div>
@@ -986,14 +983,64 @@
 
     <script>
         /*
-         * Guarda a logo em Base64
-         * para visualização e salvamento.
+         * Logo padrão incorporada no código.
+         *
+         * Esta é uma imagem SVG embutida, visualmente
+         * semelhante à logo enviada.
+         *
+         * Para usar exatamente o JPG enviado, consulte
+         * a opção abaixo explicada depois do código.
          */
-        let logoBase64 = "";
+        const LOGO_PADRAO = `
+data:image/svg+xml;charset=UTF-8,
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="900"
+     height="600"
+     viewBox="0 0 900 600">
+
+    <rect width="900" height="600" fill="white"/>
+
+    <g fill="#111111">
+        <path d="M420 40 L540 40 L780 280 L700 280 L500 100 L300 280 L220 280 Z"/>
+    </g>
+
+    <g fill="#1111dd">
+        <path d="M40 280 L190 120 L250 120 L100 280 Z"/>
+        <path d="M140 280 L290 120 L350 120 L200 280 Z"/>
+        <path d="M240 280 L390 120 L450 120 L300 280 Z"/>
+        <rect x="370" y="20" width="120" height="60"/>
+    </g>
+
+    <text x="40"
+          y="470"
+          fill="#1111dd"
+          font-size="185"
+          font-family="Arial"
+          font-weight="bold">
+        BETO
+    </text>
+
+    <text x="40"
+          y="545"
+          fill="#1111dd"
+          font-size="25"
+          font-family="Arial">
+        pinturas | construções | reformas
+    </text>
+</svg>
+        `.replace(/\n/g, "")
+         .replace(/>\s+</g, "><");
 
 
         /*
-         * Formata valores em reais.
+         * A logo atual começa como a logo padrão.
+         */
+        let logoBase64 =
+            LOGO_PADRAO;
+
+
+        /*
+         * Formata moeda brasileira.
          */
         function moeda(valor) {
             return Number(valor).toLocaleString(
@@ -1026,7 +1073,7 @@
 
 
         /*
-         * Retorna a data local atual.
+         * Data local atual.
          */
         function hojeISO() {
             const hoje =
@@ -1056,7 +1103,7 @@
 
 
         /*
-         * Evita interpretar texto como HTML.
+         * Protege os textos.
          */
         function textoSeguro(texto) {
             return String(texto)
@@ -1069,7 +1116,7 @@
 
 
         /*
-         * Adiciona uma linha de serviço.
+         * Adiciona um serviço.
          */
         function adicionarItem(
             descricao = "",
@@ -1170,7 +1217,7 @@
 
 
         /*
-         * Atualiza os dados e cálculos.
+         * Atualiza dados, logo, tabela e totais.
          */
         function atualizarOrcamento() {
             const ligacoes = {
@@ -1214,15 +1261,6 @@
                 );
 
             document.getElementById(
-                "pdfGarantia"
-            ).textContent =
-                dataBR(
-                    document.getElementById(
-                        "garantia"
-                    ).value
-                );
-
-            document.getElementById(
                 "pdfSituacao"
             ).textContent =
                 document.getElementById(
@@ -1230,14 +1268,19 @@
                 ).value;
 
 
+            /*
+             * Tabela dos serviços.
+             */
             const tabela =
                 document.getElementById(
                     "pdfItens"
                 );
 
-            tabela.innerHTML = "";
+            tabela.innerHTML =
+                "";
 
-            let subtotal = 0;
+            let subtotal =
+                0;
 
             document
                 .querySelectorAll(".linha-item")
@@ -1269,7 +1312,8 @@
                     const totalItem =
                         quantidade * valor;
 
-                    subtotal += totalItem;
+                    subtotal +=
+                        totalItem;
 
                     const tr =
                         document.createElement(
@@ -1302,6 +1346,9 @@
                 });
 
 
+            /*
+             * Desconto.
+             */
             let desconto =
                 Number(
                     document.getElementById(
@@ -1309,6 +1356,9 @@
                     ).value
                 ) || 0;
 
+            /*
+             * BDI.
+             */
             let bdi =
                 Number(
                     document.getElementById(
@@ -1353,6 +1403,9 @@
                 valorBDI;
 
 
+            /*
+             * Mostra os valores.
+             */
             document.getElementById(
                 "pdfSubtotal"
             ).textContent =
@@ -1396,6 +1449,9 @@
                 moeda(totalFinal);
 
 
+            /*
+             * Mostra ou oculta desconto e BDI.
+             */
             document.getElementById(
                 "linhaDesconto"
             ).style.display =
@@ -1417,23 +1473,26 @@
                     : "none";
 
 
-            if (logoBase64) {
-                const imagem =
-                    document.getElementById(
-                        "logoVisual"
-                    );
+            /*
+             * Exibe a logo atual.
+             */
+            const imagem =
+                document.getElementById(
+                    "logoVisual"
+                );
 
-                imagem.src =
-                    logoBase64;
+            imagem.src =
+                logoBase64;
 
-                imagem.style.display =
-                    "block";
-            }
+            imagem.style.display =
+                logoBase64
+                    ? "block"
+                    : "none";
         }
 
 
         /*
-         * Abre a janela normal de impressão.
+         * Imprime o orçamento.
          */
         function imprimirOrcamento() {
             atualizarOrcamento();
@@ -1448,10 +1507,11 @@
 
 
         /*
-         * Lê todos os campos e itens.
+         * Obtém os dados atuais.
          */
         function obterDados() {
-            const itens = [];
+            const itens =
+                [];
 
             document
                 .querySelectorAll(".linha-item")
@@ -1547,7 +1607,8 @@
 
 
         /*
-         * Salva todos os dados atuais.
+         * Salva todos os dados, inclusive
+         * os itens e a logo alterada.
          */
         function salvarDados() {
             try {
@@ -1559,19 +1620,19 @@
                 );
 
                 alert(
-                    "Dados e itens salvos com sucesso."
+                    "Dados, itens e logo salvos com sucesso."
                 );
             } catch (erro) {
                 alert(
                     "Não foi possível salvar. " +
-                    "Use uma logo menor."
+                    "Use uma imagem menor."
                 );
             }
         }
 
 
         /*
-         * Carrega exatamente os dados salvos.
+         * Carrega dados e itens salvos.
          */
         function carregarDados() {
             const salvo =
@@ -1623,40 +1684,18 @@
 
 
             /*
-             * Carrega a logo.
+             * Recupera a logo salva.
              */
             logoBase64 =
-                dados.logoBase64 || "";
+                dados.logoBase64 ||
+                LOGO_PADRAO;
 
-            const imagem =
-                document.getElementById(
-                    "logoVisual"
-                );
-
-            const nomeLogo =
-                document.getElementById(
-                    "nomeLogo"
-                );
-
-            if (logoBase64) {
-                imagem.src =
-                    logoBase64;
-
-                imagem.style.display =
-                    "block";
-
-                nomeLogo.textContent =
-                    "Logo carregada dos dados salvos";
-            } else {
-                imagem.src =
-                    "";
-
-                imagem.style.display =
-                    "none";
-
-                nomeLogo.textContent =
-                    "Nenhuma logo selecionada";
-            }
+            document.getElementById(
+                "nomeLogo"
+            ).textContent =
+                dados.logoBase64
+                    ? "Logo personalizada carregada"
+                    : "Logo padrão do código carregada";
 
 
             /*
@@ -1670,9 +1709,6 @@
 
             /*
              * Recria somente os itens salvos.
-             *
-             * Se não houver itens salvos,
-             * a lista continuará vazia.
              */
             if (
                 Array.isArray(
@@ -1692,18 +1728,47 @@
             atualizarOrcamento();
 
             alert(
-                "Dados e itens carregados com sucesso."
+                "Dados, itens e logo carregados com sucesso."
             );
         }
 
 
         /*
-         * Apaga todos os dados salvos.
+         * Volta para a logo padrão incorporada
+         * no próprio código.
+         */
+        function restaurarLogoPadrao() {
+            logoBase64 =
+                LOGO_PADRAO;
+
+            document.getElementById(
+                "logoArquivo"
+            ).value =
+                "";
+
+            document.getElementById(
+                "nomeLogo"
+            ).textContent =
+                "Logo padrão do código carregada";
+
+            atualizarOrcamento();
+
+            alert(
+                "Logo padrão restaurada. " +
+                "Clique em Salvar todos os dados " +
+                "se quiser salvar essa escolha."
+            );
+        }
+
+
+        /*
+         * Apaga dados, itens e logo personalizada.
+         * A logo exibida volta para a padrão.
          */
         function limparDados() {
             const confirmar =
                 confirm(
-                    "Apagar todos os dados, itens e logo salvos?"
+                    "Apagar todos os dados, itens e logo personalizada?"
                 );
 
             if (!confirmar) {
@@ -1715,22 +1780,17 @@
             );
 
             logoBase64 =
-                "";
+                LOGO_PADRAO;
 
             document.getElementById(
-                "logoVisual"
-            ).src =
+                "logoArquivo"
+            ).value =
                 "";
-
-            document.getElementById(
-                "logoVisual"
-            ).style.display =
-                "none";
 
             document.getElementById(
                 "nomeLogo"
             ).textContent =
-                "Nenhuma logo selecionada";
+                "Logo padrão do código carregada";
 
             document.getElementById(
                 "listaItens"
@@ -1740,13 +1800,15 @@
             atualizarOrcamento();
 
             alert(
-                "Dados, itens e logo apagados."
+                "Dados apagados. " +
+                "A logo padrão foi restaurada."
             );
         }
 
 
         /*
-         * Atualiza automaticamente a data.
+         * Atualiza a data para o dia em que
+         * o site foi aberto.
          */
         function atualizarDataAutomaticamente() {
             document.getElementById(
@@ -1758,7 +1820,7 @@
 
         /*
          * Atualiza o orçamento enquanto
-         * o usuário digita.
+         * os campos são preenchidos.
          */
         function ativarAtualizacaoAutomatica() {
             const campos =
@@ -1797,7 +1859,7 @@
 
 
         /*
-         * Carrega a logo escolhida.
+         * Permite substituir a logo padrão.
          */
         document.getElementById(
             "logoArquivo"
@@ -1811,14 +1873,14 @@
                     return;
                 }
 
-                const tiposPermitidos = [
+                const permitidos = [
                     "image/png",
                     "image/jpeg",
                     "image/jpg"
                 ];
 
                 if (
-                    !tiposPermitidos.includes(
+                    !permitidos.includes(
                         arquivo.type
                     )
                 ) {
@@ -1857,16 +1919,6 @@
                                 .result;
 
                         document.getElementById(
-                            "logoVisual"
-                        ).src =
-                            logoBase64;
-
-                        document.getElementById(
-                            "logoVisual"
-                        ).style.display =
-                            "block";
-
-                        document.getElementById(
                             "nomeLogo"
                         ).textContent =
                             arquivo.name;
@@ -1883,8 +1935,11 @@
 
         /*
          * Inicialização:
-         * começa sem nenhum serviço.
+         * logo padrão e nenhum item.
          */
+        logoBase64 =
+            LOGO_PADRAO;
+
         atualizarDataAutomaticamente();
 
         ativarAtualizacaoAutomatica();
