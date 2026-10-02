@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Orçamento</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,6 +16,7 @@
             --azul: #153dcc;
             --cinza: #555555;
             --vermelho: #b00020;
+            --verde: #176b2c;
             --borda: #222222;
         }
 
@@ -79,6 +83,11 @@
             resize: vertical;
         }
 
+        small {
+            margin-top: 5px;
+            color: #555555;
+        }
+
         button {
             padding: 11px 16px;
             border: none;
@@ -113,13 +122,17 @@
         }
 
         /*
-         * ÁREA DE CADASTRO DOS SERVIÇOS
+         * ÁREA DE SERVIÇOS
          */
 
-        .cabecalho-itens {
+        .cabecalho-itens,
+        .linha-item {
             display: grid;
             grid-template-columns: 2.5fr 1fr 1fr 1.2fr 100px;
             gap: 8px;
+        }
+
+        .cabecalho-itens {
             margin-bottom: 6px;
             padding: 0 4px;
             font-size: 13px;
@@ -127,16 +140,8 @@
         }
 
         .linha-item {
-            display: grid;
-            grid-template-columns: 2.5fr 1fr 1fr 1.2fr 100px;
-            gap: 8px;
             margin-bottom: 8px;
             align-items: center;
-        }
-
-        .linha-item input,
-        .linha-item select {
-            width: 100%;
         }
 
         .linha-item button {
@@ -146,11 +151,7 @@
         }
 
         /*
-         * MODELO DO ORÇAMENTO NA TELA
-         *
-         * A4:
-         * largura: 210 mm
-         * altura mínima: 297 mm
+         * MODELO DO ORÇAMENTO
          */
 
         #orcamento {
@@ -171,7 +172,6 @@
             gap: 20px;
             padding-bottom: 14px;
             border-bottom: 1px solid var(--borda);
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -208,16 +208,14 @@
             gap: 20px;
             margin: 15px 0;
             font-size: 12px;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
 
         .condicoes {
-            margin: 12px 0 16px 0;
+            margin: 12px 0 16px;
             font-size: 12px;
             line-height: 1.35;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -226,7 +224,6 @@
             margin-bottom: 15px;
             padding-bottom: 13px;
             border-bottom: 1px solid var(--borda);
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -249,7 +246,7 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            font-size: 11px;                    
+            font-size: 11px;
             page-break-inside: auto;
             break-inside: auto;
         }
@@ -258,14 +255,9 @@
             display: table-header-group;
         }
 
-        .tabela-servicos tfoot {
-            display: table-footer-group;
-        }
-
         .tabela-servicos tr {
             page-break-inside: avoid;
             break-inside: avoid;
-            page-break-after: auto;
         }
 
         .tabela-servicos th {
@@ -283,7 +275,7 @@
 
         .tabela-servicos th:nth-child(1),
         .tabela-servicos td:nth-child(1) {
-            width: 38%;
+            width: 36%;
             text-align: left;
         }
 
@@ -301,13 +293,13 @@
 
         .tabela-servicos th:nth-child(4),
         .tabela-servicos td:nth-child(4) {
-            width: 18%;
+            width: 19%;
             text-align: right;
         }
 
         .tabela-servicos th:nth-child(5),
         .tabela-servicos td:nth-child(5) {
-            width: 19%;
+            width: 20%;
             text-align: right;
         }
 
@@ -318,7 +310,6 @@
         .resumo-financeiro {
             margin-top: 12px;
             font-size: 12px;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -332,6 +323,10 @@
 
         .linha-desconto {
             color: var(--vermelho);
+        }
+
+        .linha-bdi {
+            color: var(--verde);
         }
 
         .total-geral {
@@ -351,7 +346,6 @@
             padding-top: 12px;
             border-top: 1px solid var(--borda);
             font-size: 11px;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
@@ -370,13 +364,12 @@
             text-align: center;
             color: #666666;
             font-size: 9px;
-
             page-break-inside: avoid;
             break-inside: avoid;
         }
 
         /*
-         * CONFIGURAÇÃO DA IMPRESSÃO
+         * IMPRESSÃO A4
          */
 
         @page {
@@ -385,7 +378,6 @@
         }
 
         @media print {
-
             html,
             body {
                 width: auto;
@@ -395,16 +387,10 @@
                 background: #ffffff !important;
             }
 
-            /*
-             * Não imprime o formulário e os botões.
-             */
             .painel {
                 display: none !important;
             }
 
-            /*
-             * Imprime somente o orçamento.
-             */
             #orcamento {
                 width: auto !important;
                 min-height: 0 !important;
@@ -416,36 +402,21 @@
                 overflow: visible !important;
             }
 
-            /*
-             * Permite imprimir cores e imagens,
-             * dependendo da configuração do navegador.
-             */
             #orcamento,
             #orcamento * {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
 
-            /*
-             * Faz a tabela continuar normalmente
-             * em outra página.
-             */
             .tabela-servicos {
                 page-break-inside: auto;
                 break-inside: auto;
             }
 
-            /*
-             * Repete o cabeçalho da tabela
-             * nas páginas seguintes.
-             */
             .tabela-servicos thead {
                 display: table-header-group;
             }
 
-            /*
-             * Evita dividir linhas no meio.
-             */
             .tabela-servicos tr {
                 page-break-inside: avoid;
                 break-inside: avoid;
@@ -453,7 +424,7 @@
         }
 
         /*
-         * VISUALIZAÇÃO EM CELULAR
+         * CELULAR
          */
 
         @media (max-width: 750px) {
@@ -515,7 +486,7 @@
 
 <body>
 
-    <!-- PAINEL DE PREENCHIMENTO -->
+    <!-- FORMULÁRIO -->
 
     <div class="painel">
 
@@ -574,7 +545,8 @@
 
                 <input
                     id="clienteNome"
-                    value="Condomínio Edifício Bordeaux"
+                    value=""
+                    placeholder="Digite o nome do cliente"
                 >
             </div>
 
@@ -585,7 +557,8 @@
 
                 <input
                     id="clienteTelefone"
-                    value="(00) 00000-0000"
+                    value=""
+                    placeholder="Digite o telefone"
                 >
             </div>
 
@@ -594,7 +567,10 @@
                     Endereço do cliente
                 </label>
 
-                <textarea id="clienteEndereco">Rua coronel Juca N 1100 - Abaiara/Ceará - CEP: 00000-000</textarea>
+                <textarea
+                    id="clienteEndereco"
+                    placeholder="Digite o endereço"
+                ></textarea>
             </div>
 
             <div class="campo">
@@ -631,6 +607,46 @@
             </div>
 
             <div class="campo">
+                <label for="situacao">
+                    Situação do orçamento
+                </label>
+
+                <select id="situacao">
+                    <option value="Aguardando retorno">
+                        Aguardando retorno
+                    </option>
+
+                    <option value="Em análise">
+                        Em análise
+                    </option>
+
+                    <option value="Enviado ao cliente">
+                        Enviado ao cliente
+                    </option>
+
+                    <option value="Aprovado">
+                        Aprovado
+                    </option>
+
+                    <option value="Em execução">
+                        Em execução
+                    </option>
+
+                    <option value="Concluído">
+                        Concluído
+                    </option>
+
+                    <option value="Recusado">
+                        Recusado
+                    </option>
+
+                    <option value="Cancelado">
+                        Cancelado
+                    </option>
+                </select>
+            </div>
+
+            <div class="campo">
                 <label for="pagamento">
                     Forma de pagamento
                 </label>
@@ -651,7 +667,7 @@
 
             <div class="campo">
                 <label for="descontoPorcentagem">
-                    Desconto sobre o total (%)
+                    Desconto sobre o subtotal (%)
                 </label>
 
                 <input
@@ -661,18 +677,53 @@
                     max="100"
                     step="0.01"
                     value="0"
-                    placeholder="Ex.: 10"
+                >
+            </div>
+
+            <div class="campo">
+                <label for="bdiPorcentagem">
+                    BDI sobre o valor após desconto (%)
+                </label>
+
+                <input
+                    id="bdiPorcentagem"
+                    type="number"
+                    min="0"
+                    max="1000"
+                    step="0.01"
+                    value="0"
                 >
             </div>
 
             <div class="campo">
                 <label for="mostrarDesconto">
-                    Mostrar desconto no PDF
+                    Mostrar desconto
                 </label>
 
                 <select id="mostrarDesconto">
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
+                    <option value="sim">
+                        Sim
+                    </option>
+
+                    <option value="nao">
+                        Não
+                    </option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="mostrarBDI">
+                    Mostrar BDI
+                </label>
+
+                <select id="mostrarBDI">
+                    <option value="sim">
+                        Sim
+                    </option>
+
+                    <option value="nao">
+                        Não
+                    </option>
                 </select>
             </div>
 
@@ -686,6 +737,10 @@
                     type="file"
                     accept="image/png, image/jpeg, image/jpg"
                 >
+
+                <small id="nomeLogo">
+                    Nenhuma logo selecionada
+                </small>
             </div>
 
         </div>
@@ -700,6 +755,7 @@
             <div>Ação</div>
         </div>
 
+        <!-- Começa vazio -->
         <div id="listaItens"></div>
 
         <button
@@ -723,7 +779,7 @@
             <button
                 class="btn-principal"
                 type="button"
-                onclick="gerarPDF()"
+                onclick="imprimirOrcamento()"
             >
                 Imprimir / Salvar PDF
             </button>
@@ -733,7 +789,7 @@
                 type="button"
                 onclick="salvarDados()"
             >
-                Salvar meus dados
+                Salvar todos os dados
             </button>
 
             <button
@@ -757,7 +813,7 @@
     </div>
 
 
-    <!-- MODELO DO ORÇAMENTO -->
+    <!-- ORÇAMENTO -->
 
     <div id="orcamento">
 
@@ -795,7 +851,7 @@
 
             <div>
                 <strong>Situação do orçamento:</strong>
-                Aguardando retorno
+                <span id="pdfSituacao"></span>
             </div>
 
         </div>
@@ -857,8 +913,8 @@
             </div>
 
             <div
-                class="linha-financeira linha-desconto"
                 id="linhaDesconto"
+                class="linha-financeira linha-desconto"
             >
 
                 <span>
@@ -868,6 +924,22 @@
 
                 <span id="pdfValorDesconto">
                     - R$ 0,00
+                </span>
+
+            </div>
+
+            <div
+                id="linhaBDI"
+                class="linha-financeira linha-bdi"
+            >
+
+                <span>
+                    BDI
+                    (<span id="pdfBDIPorcentagem">0</span>%):
+                </span>
+
+                <span id="pdfValorBDI">
+                    + R$ 0,00
                 </span>
 
             </div>
@@ -905,36 +977,45 @@
 
         </div>
 
+        <div class="rodape">
+            Documento gerado pelo sistema de orçamentos.
+        </div>
+
     </div>
 
 
     <script>
         /*
-         * Guarda a logo selecionada.
+         * Guarda a logo em Base64
+         * para visualização e salvamento.
          */
         let logoBase64 = "";
 
 
         /*
-         * Formata número como moeda.
+         * Formata valores em reais.
          */
-        function formatarMoeda(valor) {
-            return Number(valor).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL"
-            });
+        function moeda(valor) {
+            return Number(valor).toLocaleString(
+                "pt-BR",
+                {
+                    style: "currency",
+                    currency: "BRL"
+                }
+            );
         }
 
 
         /*
-         * Formata data para o padrão brasileiro.
+         * Converte AAAA-MM-DD para DD/MM/AAAA.
          */
-        function formatarData(data) {
+        function dataBR(data) {
             if (!data) {
                 return "";
             }
 
-            const partes = data.split("-");
+            const partes =
+                data.split("-");
 
             if (partes.length !== 3) {
                 return data;
@@ -945,9 +1026,39 @@
 
 
         /*
-         * Protege textos inseridos pelo usuário.
+         * Retorna a data local atual.
          */
-        function protegerTexto(texto) {
+        function hojeISO() {
+            const hoje =
+                new Date();
+
+            const ano =
+                hoje.getFullYear();
+
+            const mes =
+                String(
+                    hoje.getMonth() + 1
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            const dia =
+                String(
+                    hoje.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            return `${ano}-${mes}-${dia}`;
+        }
+
+
+        /*
+         * Evita interpretar texto como HTML.
+         */
+        function textoSeguro(texto) {
             return String(texto)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -958,13 +1069,7 @@
 
 
         /*
-         * Adiciona um serviço.
-         *
-         * Ordem:
-         * descrição,
-         * unidade,
-         * quantidade,
-         * valor unitário.
+         * Adiciona uma linha de serviço.
          */
         function adicionarItem(
             descricao = "",
@@ -972,64 +1077,31 @@
             quantidade = "",
             valor = ""
         ) {
-            const lista =
-                document.getElementById("listaItens");
-
             const linha =
                 document.createElement("div");
 
-            linha.className = "linha-item";
+            linha.className =
+                "linha-item";
 
             linha.innerHTML = `
                 <input
                     class="descricao"
                     type="text"
                     placeholder="Ex.: Pintura de parede"
-                    value="${protegerTexto(descricao)}"
+                    value="${textoSeguro(descricao)}"
                 >
 
                 <select class="unidade">
-
-                    <option value="m²">
-                        m² - metro quadrado
-                    </option>
-
-                    <option value="m³">
-                        m³ - metro cúbico
-                    </option>
-
-                    <option value="m">
-                        m - metro linear
-                    </option>
-
-                    <option value="un">
-                        un - unidade
-                    </option>
-
-                    <option value="kg">
-                        kg - quilograma
-                    </option>
-
-                    <option value="L">
-                        L - litro
-                    </option>
-
-                    <option value="h">
-                        h - hora
-                    </option>
-
-                    <option value="vb">
-                        vb - verba
-                    </option>
-
-                    <option value="diária">
-                        diária
-                    </option>
-
-                    <option value="jornada">
-                        jornada
-                    </option>
-
+                    <option value="m²">m²</option>
+                    <option value="m³">m³</option>
+                    <option value="m">m</option>
+                    <option value="un">un</option>
+                    <option value="kg">kg</option>
+                    <option value="L">L</option>
+                    <option value="h">h</option>
+                    <option value="vb">vb</option>
+                    <option value="diária">diária</option>
+                    <option value="jornada">jornada</option>
                 </select>
 
                 <input
@@ -1037,7 +1109,7 @@
                     type="number"
                     min="0"
                     step="0.01"
-                    placeholder="Ex.: 100"
+                    placeholder="Quantidade"
                     value="${quantidade}"
                 >
 
@@ -1046,7 +1118,7 @@
                     type="number"
                     min="0"
                     step="0.01"
-                    placeholder="Ex.: 25,00"
+                    placeholder="Valor unitário"
                     value="${valor}"
                 >
 
@@ -1059,13 +1131,19 @@
                 </button>
             `;
 
-            lista.appendChild(linha);
+            document
+                .getElementById("listaItens")
+                .appendChild(linha);
 
-            linha.querySelector(".unidade").value =
+            linha.querySelector(
+                ".unidade"
+            ).value =
                 unidade;
 
             linha
-                .querySelectorAll("input, select")
+                .querySelectorAll(
+                    "input, select"
+                )
                 .forEach(campo => {
                     campo.addEventListener(
                         "input",
@@ -1092,142 +1170,198 @@
 
 
         /*
-         * Atualiza dados, tabela e valores.
+         * Atualiza os dados e cálculos.
          */
         function atualizarOrcamento() {
-            document.getElementById("pdfNumero").textContent =
-                document.getElementById("numeroOrcamento").value;
+            const ligacoes = {
+                pdfNumero: "numeroOrcamento",
+                pdfEmpresa: "empresaNome",
+                pdfEmail: "empresaEmail",
+                pdfTelefone: "empresaTelefone",
+                pdfCliente: "clienteNome",
+                pdfClienteTelefone: "clienteTelefone",
+                pdfEndereco: "clienteEndereco",
+                pdfCondicoes: "condicoes",
+                pdfPagamento: "pagamento"
+            };
 
-            document.getElementById("pdfEmpresa").textContent =
-                document.getElementById("empresaNome").value;
+            Object.entries(ligacoes)
+                .forEach(([destino, origem]) => {
+                    document.getElementById(
+                        destino
+                    ).textContent =
+                        document.getElementById(
+                            origem
+                        ).value;
+                });
 
-            document.getElementById("pdfEmail").textContent =
-                document.getElementById("empresaEmail").value;
-
-            document.getElementById("pdfTelefone").textContent =
-                document.getElementById("empresaTelefone").value;
-
-            document.getElementById("pdfCliente").textContent =
-                document.getElementById("clienteNome").value;
-
-            document.getElementById("pdfClienteTelefone").textContent =
-                document.getElementById("clienteTelefone").value;
-
-            document.getElementById("pdfEndereco").textContent =
-                document.getElementById("clienteEndereco").value;
-
-            document.getElementById("pdfDataEmissao").textContent =
-                formatarData(
-                    document.getElementById("dataEmissao").value
+            document.getElementById(
+                "pdfDataEmissao"
+            ).textContent =
+                dataBR(
+                    document.getElementById(
+                        "dataEmissao"
+                    ).value
                 );
 
-            document.getElementById("pdfValidade").textContent =
-                formatarData(
-                    document.getElementById("validade").value
+            document.getElementById(
+                "pdfValidade"
+            ).textContent =
+                dataBR(
+                    document.getElementById(
+                        "validade"
+                    ).value
                 );
 
-            document.getElementById("pdfGarantia").textContent =
-                formatarData(
-                    document.getElementById("garantia").value
+            document.getElementById(
+                "pdfGarantia"
+            ).textContent =
+                dataBR(
+                    document.getElementById(
+                        "garantia"
+                    ).value
                 );
 
-            document.getElementById("pdfPagamento").textContent =
-                document.getElementById("pagamento").value;
-
-            document.getElementById("pdfCondicoes").textContent =
-                document.getElementById("condicoes").value;
+            document.getElementById(
+                "pdfSituacao"
+            ).textContent =
+                document.getElementById(
+                    "situacao"
+                ).value;
 
 
             const tabela =
-                document.getElementById("pdfItens");
+                document.getElementById(
+                    "pdfItens"
+                );
 
             tabela.innerHTML = "";
 
             let subtotal = 0;
 
-            const itens =
-                document.querySelectorAll(".linha-item");
+            document
+                .querySelectorAll(".linha-item")
+                .forEach(item => {
+                    const descricao =
+                        item.querySelector(
+                            ".descricao"
+                        ).value;
 
-            itens.forEach(item => {
-                const descricao =
-                    item.querySelector(".descricao").value;
+                    const unidade =
+                        item.querySelector(
+                            ".unidade"
+                        ).value;
 
-                const unidade =
-                    item.querySelector(".unidade").value;
+                    const quantidade =
+                        Number(
+                            item.querySelector(
+                                ".quantidade"
+                            ).value
+                        ) || 0;
 
-                const quantidade =
-                    Number(
-                        item.querySelector(".quantidade").value
-                    ) || 0;
+                    const valor =
+                        Number(
+                            item.querySelector(
+                                ".valor"
+                            ).value
+                        ) || 0;
 
-                const valorUnitario =
-                    Number(
-                        item.querySelector(".valor").value
-                    ) || 0;
+                    const totalItem =
+                        quantidade * valor;
 
-                const totalItem =
-                    quantidade * valorUnitario;
+                    subtotal += totalItem;
 
-                subtotal += totalItem;
+                    const tr =
+                        document.createElement(
+                            "tr"
+                        );
 
-                const linhaTabela =
-                    document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>
+                            ${textoSeguro(descricao)}
+                        </td>
 
-                linhaTabela.innerHTML = `
-                    <td>
-                        ${protegerTexto(descricao)}
-                    </td>
+                        <td>
+                            ${textoSeguro(unidade)}
+                        </td>
 
-                    <td>
-                        ${protegerTexto(unidade)}
-                    </td>
+                        <td>
+                            ${quantidade}
+                        </td>
 
-                    <td>
-                        ${quantidade}
-                    </td>
+                        <td>
+                            ${moeda(valor)}
+                        </td>
 
-                    <td>
-                        ${formatarMoeda(valorUnitario)}
-                    </td>
+                        <td>
+                            ${moeda(totalItem)}
+                        </td>
+                    `;
 
-                    <td>
-                        ${formatarMoeda(totalItem)}
-                    </td>
-                `;
-
-                tabela.appendChild(linhaTabela);
-            });
+                    tabela.appendChild(tr);
+                });
 
 
-            let percentual =
+            let desconto =
                 Number(
                     document.getElementById(
                         "descontoPorcentagem"
                     ).value
                 ) || 0;
 
-            if (percentual < 0) {
-                percentual = 0;
-            }
+            let bdi =
+                Number(
+                    document.getElementById(
+                        "bdiPorcentagem"
+                    ).value
+                ) || 0;
 
-            if (percentual > 100) {
-                percentual = 100;
-            }
+            desconto =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        desconto
+                    )
+                );
+
+            bdi =
+                Math.max(
+                    0,
+                    Math.min(
+                        1000,
+                        bdi
+                    )
+                );
 
             const valorDesconto =
-                subtotal * percentual / 100;
+                subtotal *
+                desconto /
+                100;
+
+            const baseBDI =
+                subtotal -
+                valorDesconto;
+
+            const valorBDI =
+                baseBDI *
+                bdi /
+                100;
 
             const totalFinal =
-                subtotal - valorDesconto;
+                baseBDI +
+                valorBDI;
 
 
-            document.getElementById("pdfSubtotal").textContent =
-                formatarMoeda(subtotal);
+            document.getElementById(
+                "pdfSubtotal"
+            ).textContent =
+                moeda(subtotal);
 
             document.getElementById(
                 "pdfDescontoPorcentagem"
             ).textContent =
-                percentual.toLocaleString(
+                desconto.toLocaleString(
                     "pt-BR",
                     {
                         maximumFractionDigits: 2
@@ -1238,32 +1372,49 @@
                 "pdfValorDesconto"
             ).textContent =
                 "- " +
-                formatarMoeda(valorDesconto);
+                moeda(valorDesconto);
 
-            document.getElementById("pdfTotal").textContent =
-                formatarMoeda(totalFinal);
-
-
-            const mostrarDesconto =
-                document.getElementById(
-                    "mostrarDesconto"
-                ).value;
-
-            const linhaDesconto =
-                document.getElementById(
-                    "linhaDesconto"
+            document.getElementById(
+                "pdfBDIPorcentagem"
+            ).textContent =
+                bdi.toLocaleString(
+                    "pt-BR",
+                    {
+                        maximumFractionDigits: 2
+                    }
                 );
 
-            if (
-                mostrarDesconto === "nao" ||
-                percentual === 0
-            ) {
-                linhaDesconto.style.display =
-                    "none";
-            } else {
-                linhaDesconto.style.display =
-                    "flex";
-            }
+            document.getElementById(
+                "pdfValorBDI"
+            ).textContent =
+                "+ " +
+                moeda(valorBDI);
+
+            document.getElementById(
+                "pdfTotal"
+            ).textContent =
+                moeda(totalFinal);
+
+
+            document.getElementById(
+                "linhaDesconto"
+            ).style.display =
+                document.getElementById(
+                    "mostrarDesconto"
+                ).value === "sim" &&
+                desconto > 0
+                    ? "flex"
+                    : "none";
+
+            document.getElementById(
+                "linhaBDI"
+            ).style.display =
+                document.getElementById(
+                    "mostrarBDI"
+                ).value === "sim" &&
+                bdi > 0
+                    ? "flex"
+                    : "none";
 
 
             if (logoBase64) {
@@ -1272,37 +1423,34 @@
                         "logoVisual"
                     );
 
-                imagem.src = logoBase64;
-                imagem.style.display = "block";
+                imagem.src =
+                    logoBase64;
+
+                imagem.style.display =
+                    "block";
             }
         }
 
 
         /*
          * Abre a janela normal de impressão.
-         *
-         * Na janela que será aberta você escolherá:
-         * - salvar como PDF;
-         * - papel A4;
-         * - escala;
-         * - margens;
-         * - orientação;
-         * - cabeçalho e rodapé;
-         * - gráficos de fundo.
          */
-        function gerarPDF() {
+        function imprimirOrcamento() {
             atualizarOrcamento();
 
-            setTimeout(function() {
-                window.print();
-            }, 300);
+            setTimeout(
+                function() {
+                    window.print();
+                },
+                300
+            );
         }
 
 
         /*
-         * Reúne todos os dados para salvamento.
+         * Lê todos os campos e itens.
          */
-        function obterDadosParaSalvar() {
+        function obterDados() {
             const itens = [];
 
             document
@@ -1331,110 +1479,107 @@
                     });
                 });
 
+            const campo =
+                id =>
+                    document.getElementById(
+                        id
+                    ).value;
+
             return {
                 empresaNome:
-                    document.getElementById(
-                        "empresaNome"
-                    ).value,
+                    campo("empresaNome"),
 
                 numeroOrcamento:
-                    document.getElementById(
-                        "numeroOrcamento"
-                    ).value,
+                    campo("numeroOrcamento"),
 
                 empresaEmail:
-                    document.getElementById(
-                        "empresaEmail"
-                    ).value,
+                    campo("empresaEmail"),
 
                 empresaTelefone:
-                    document.getElementById(
-                        "empresaTelefone"
-                    ).value,
+                    campo("empresaTelefone"),
 
                 clienteNome:
-                    document.getElementById(
-                        "clienteNome"
-                    ).value,
+                    campo("clienteNome"),
 
                 clienteTelefone:
-                    document.getElementById(
-                        "clienteTelefone"
-                    ).value,
+                    campo("clienteTelefone"),
 
                 clienteEndereco:
-                    document.getElementById(
-                        "clienteEndereco"
-                    ).value,
+                    campo("clienteEndereco"),
 
                 dataEmissao:
-                    document.getElementById(
-                        "dataEmissao"
-                    ).value,
+                    campo("dataEmissao"),
 
                 validade:
-                    document.getElementById(
-                        "validade"
-                    ).value,
+                    campo("validade"),
 
                 garantia:
-                    document.getElementById(
-                        "garantia"
-                    ).value,
+                    campo("garantia"),
+
+                situacao:
+                    campo("situacao"),
 
                 pagamento:
-                    document.getElementById(
-                        "pagamento"
-                    ).value,
+                    campo("pagamento"),
 
                 condicoes:
-                    document.getElementById(
-                        "condicoes"
-                    ).value,
+                    campo("condicoes"),
 
                 descontoPorcentagem:
-                    document.getElementById(
-                        "descontoPorcentagem"
-                    ).value,
+                    campo("descontoPorcentagem"),
+
+                bdiPorcentagem:
+                    campo("bdiPorcentagem"),
 
                 mostrarDesconto:
-                    document.getElementById(
-                        "mostrarDesconto"
-                    ).value,
+                    campo("mostrarDesconto"),
 
-                itens: itens
+                mostrarBDI:
+                    campo("mostrarBDI"),
+
+                logoBase64:
+                    logoBase64,
+
+                itens:
+                    itens
             };
         }
 
 
         /*
-         * Salva todos os dados no navegador.
+         * Salva todos os dados atuais.
          */
         function salvarDados() {
-            const dados =
-                obterDadosParaSalvar();
+            try {
+                localStorage.setItem(
+                    "dadosOrcador",
+                    JSON.stringify(
+                        obterDados()
+                    )
+                );
 
-            localStorage.setItem(
-                "dadosOrcador",
-                JSON.stringify(dados)
-            );
-
-            alert(
-                "Dados salvos neste navegador."
-            );
+                alert(
+                    "Dados e itens salvos com sucesso."
+                );
+            } catch (erro) {
+                alert(
+                    "Não foi possível salvar. " +
+                    "Use uma logo menor."
+                );
+            }
         }
 
 
         /*
-         * Carrega os dados salvos.
+         * Carrega exatamente os dados salvos.
          */
         function carregarDados() {
-            const dadosSalvos =
+            const salvo =
                 localStorage.getItem(
                     "dadosOrcador"
                 );
 
-            if (!dadosSalvos) {
+            if (!salvo) {
                 alert(
                     "Nenhum dado salvo foi encontrado."
                 );
@@ -1443,88 +1588,96 @@
             }
 
             const dados =
-                JSON.parse(dadosSalvos);
+                JSON.parse(salvo);
+
+            const campos = [
+                "empresaNome",
+                "numeroOrcamento",
+                "empresaEmail",
+                "empresaTelefone",
+                "clienteNome",
+                "clienteTelefone",
+                "clienteEndereco",
+                "dataEmissao",
+                "validade",
+                "garantia",
+                "situacao",
+                "pagamento",
+                "condicoes",
+                "descontoPorcentagem",
+                "bdiPorcentagem",
+                "mostrarDesconto",
+                "mostrarBDI"
+            ];
+
+            campos.forEach(campo => {
+                if (
+                    dados[campo] !== undefined
+                ) {
+                    document.getElementById(
+                        campo
+                    ).value =
+                        dados[campo];
+                }
+            });
 
 
-            document.getElementById(
-                "empresaNome"
-            ).value =
-                dados.empresaNome || "";
+            /*
+             * Carrega a logo.
+             */
+            logoBase64 =
+                dados.logoBase64 || "";
 
-            document.getElementById(
-                "numeroOrcamento"
-            ).value =
-                dados.numeroOrcamento || "";
+            const imagem =
+                document.getElementById(
+                    "logoVisual"
+                );
 
-            document.getElementById(
-                "empresaEmail"
-            ).value =
-                dados.empresaEmail || "";
+            const nomeLogo =
+                document.getElementById(
+                    "nomeLogo"
+                );
 
-            document.getElementById(
-                "empresaTelefone"
-            ).value =
-                dados.empresaTelefone || "";
+            if (logoBase64) {
+                imagem.src =
+                    logoBase64;
 
-            document.getElementById(
-                "clienteNome"
-            ).value =
-                dados.clienteNome || "";
+                imagem.style.display =
+                    "block";
 
-            document.getElementById(
-                "clienteTelefone"
-            ).value =
-                dados.clienteTelefone || "";
+                nomeLogo.textContent =
+                    "Logo carregada dos dados salvos";
+            } else {
+                imagem.src =
+                    "";
 
-            document.getElementById(
-                "clienteEndereco"
-            ).value =
-                dados.clienteEndereco || "";
+                imagem.style.display =
+                    "none";
 
-            document.getElementById(
-                "dataEmissao"
-            ).value =
-                dados.dataEmissao || "";
-
-            document.getElementById(
-                "validade"
-            ).value =
-                dados.validade || "";
-
-            document.getElementById(
-                "garantia"
-            ).value =
-                dados.garantia || "";
-
-            document.getElementById(
-                "pagamento"
-            ).value =
-                dados.pagamento || "";
-
-            document.getElementById(
-                "condicoes"
-            ).value =
-                dados.condicoes || "";
-
-            document.getElementById(
-                "descontoPorcentagem"
-            ).value =
-                dados.descontoPorcentagem || 0;
-
-            document.getElementById(
-                "mostrarDesconto"
-            ).value =
-                dados.mostrarDesconto || "sim";
+                nomeLogo.textContent =
+                    "Nenhuma logo selecionada";
+            }
 
 
+            /*
+             * Limpa os itens atuais.
+             */
             document.getElementById(
                 "listaItens"
-            ).innerHTML = "";
+            ).innerHTML =
+                "";
 
 
+            /*
+             * Recria somente os itens salvos.
+             *
+             * Se não houver itens salvos,
+             * a lista continuará vazia.
+             */
             if (
-                dados.itens &&
-                dados.itens.length > 0
+                Array.isArray(
+                    dados.itens
+                )
             ) {
                 dados.itens.forEach(item => {
                     adicionarItem(
@@ -1539,145 +1692,203 @@
             atualizarOrcamento();
 
             alert(
-                "Dados carregados com sucesso."
+                "Dados e itens carregados com sucesso."
             );
         }
 
 
         /*
-         * Apaga os dados salvos.
+         * Apaga todos os dados salvos.
          */
         function limparDados() {
             const confirmar =
                 confirm(
-                    "Deseja realmente apagar todos os dados salvos?"
+                    "Apagar todos os dados, itens e logo salvos?"
                 );
 
-            if (confirmar) {
-                localStorage.removeItem(
-                    "dadosOrcador"
-                );
-
-                alert(
-                    "Dados apagados."
-                );
+            if (!confirmar) {
+                return;
             }
+
+            localStorage.removeItem(
+                "dadosOrcador"
+            );
+
+            logoBase64 =
+                "";
+
+            document.getElementById(
+                "logoVisual"
+            ).src =
+                "";
+
+            document.getElementById(
+                "logoVisual"
+            ).style.display =
+                "none";
+
+            document.getElementById(
+                "nomeLogo"
+            ).textContent =
+                "Nenhuma logo selecionada";
+
+            document.getElementById(
+                "listaItens"
+            ).innerHTML =
+                "";
+
+            atualizarOrcamento();
+
+            alert(
+                "Dados, itens e logo apagados."
+            );
         }
 
 
         /*
-         * Carrega a logo selecionada.
+         * Atualiza automaticamente a data.
          */
-        document
-            .getElementById("logoArquivo")
-            .addEventListener(
-                "change",
-                function(event) {
-                    const arquivo =
-                        event.target.files[0];
-
-                    if (!arquivo) {
-                        return;
-                    }
-
-                    const leitor =
-                        new FileReader();
-
-                    leitor.onload =
-                        function(evento) {
-                            logoBase64 =
-                                evento.target.result;
-
-                            atualizarOrcamento();
-                        };
-
-                    leitor.readAsDataURL(
-                        arquivo
-                    );
-                }
-            );
+        function atualizarDataAutomaticamente() {
+            document.getElementById(
+                "dataEmissao"
+            ).value =
+                hojeISO();
+        }
 
 
         /*
-         * Atualiza automaticamente quando
-         * o desconto é alterado.
+         * Atualiza o orçamento enquanto
+         * o usuário digita.
          */
-        document
-            .getElementById(
-                "descontoPorcentagem"
-            )
-            .addEventListener(
-                "input",
-                atualizarOrcamento
-            );
+        function ativarAtualizacaoAutomatica() {
+            const campos =
+                document.querySelectorAll(
+                    "#empresaNome, " +
+                    "#numeroOrcamento, " +
+                    "#empresaEmail, " +
+                    "#empresaTelefone, " +
+                    "#clienteNome, " +
+                    "#clienteTelefone, " +
+                    "#clienteEndereco, " +
+                    "#dataEmissao, " +
+                    "#validade, " +
+                    "#garantia, " +
+                    "#situacao, " +
+                    "#pagamento, " +
+                    "#condicoes, " +
+                    "#descontoPorcentagem, " +
+                    "#bdiPorcentagem, " +
+                    "#mostrarDesconto, " +
+                    "#mostrarBDI"
+                );
+
+            campos.forEach(campo => {
+                campo.addEventListener(
+                    "input",
+                    atualizarOrcamento
+                );
+
+                campo.addEventListener(
+                    "change",
+                    atualizarOrcamento
+                );
+            });
+        }
 
 
         /*
-         * Atualiza quando o usuário escolhe
-         * mostrar ou ocultar o desconto.
+         * Carrega a logo escolhida.
          */
-        document
-            .getElementById(
-                "mostrarDesconto"
-            )
-            .addEventListener(
-                "change",
-                atualizarOrcamento
-            );
-
-
-        /*
-         * Define a data atual.
-         */
-        const hoje =
-            new Date();
-
-        const ano =
-            hoje.getFullYear();
-
-        const mes =
-            String(
-                hoje.getMonth() + 1
-            ).padStart(
-                2,
-                "0"
-            );
-
-        const dia =
-            String(
-                hoje.getDate()
-            ).padStart(
-                2,
-                "0"
-            );
-
         document.getElementById(
-            "dataEmissao"
-        ).value =
-            `${ano}-${mes}-${dia}`;
+            "logoArquivo"
+        ).addEventListener(
+            "change",
+            function(event) {
+                const arquivo =
+                    event.target.files[0];
+
+                if (!arquivo) {
+                    return;
+                }
+
+                const tiposPermitidos = [
+                    "image/png",
+                    "image/jpeg",
+                    "image/jpg"
+                ];
+
+                if (
+                    !tiposPermitidos.includes(
+                        arquivo.type
+                    )
+                ) {
+                    alert(
+                        "Escolha uma imagem JPG ou PNG."
+                    );
+
+                    event.target.value =
+                        "";
+
+                    return;
+                }
+
+                if (
+                    arquivo.size >
+                    2 * 1024 * 1024
+                ) {
+                    alert(
+                        "A logo deve ter no máximo 2 MB."
+                    );
+
+                    event.target.value =
+                        "";
+
+                    return;
+                }
+
+                const leitor =
+                    new FileReader();
+
+                leitor.onload =
+                    function(resultado) {
+                        logoBase64 =
+                            resultado
+                                .target
+                                .result;
+
+                        document.getElementById(
+                            "logoVisual"
+                        ).src =
+                            logoBase64;
+
+                        document.getElementById(
+                            "logoVisual"
+                        ).style.display =
+                            "block";
+
+                        document.getElementById(
+                            "nomeLogo"
+                        ).textContent =
+                            arquivo.name;
+
+                        atualizarOrcamento();
+                    };
+
+                leitor.readAsDataURL(
+                    arquivo
+                );
+            }
+        );
 
 
         /*
-         * Serviços iniciais.
+         * Inicialização:
+         * começa sem nenhum serviço.
          */
-        adicionarItem(
-            "IMPERMEABILIZAÇÃO MANTA ALUMÍNIO 4mm",
-            "m²",
-            320,
-            89
-        );
+        atualizarDataAutomaticamente();
 
-        adicionarItem(
-            "OPCIONAL VEDAÇÃO COM ALCATRÃO DE ILHÓ DERRETIDO",
-            "m²",
-            320,
-            17.50
-        );
+        ativarAtualizacaoAutomatica();
 
-
-        /*
-         * Atualiza o orçamento ao abrir a página.
-         */
         atualizarOrcamento();
     </script>
 
